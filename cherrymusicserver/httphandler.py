@@ -415,9 +415,8 @@ class HTTPHandler(object):
         elif cherry.config['media.fetch_album_art']:
             #fetch album art from online source
             try:
-                album = os.path.basename(directory)
-                artist = os.path.basename(os.path.dirname(directory))
-                keywords = artist+' '+album
+                foldername = os.path.basename(directory)
+                keywords = foldername
                 log.i(_("Fetching album art for keywords {keywords!r}").format(keywords=keywords))
                 header, data = fetcher.fetch(keywords)
                 if header:
@@ -430,6 +429,9 @@ class HTTPHandler(object):
             except:
                 # albumart fetcher threw exception, so we serve a standard image
                 raise cherrypy.HTTPRedirect(default_folder_image, 302)
+        else:
+            # no local album art found, online fetching deactivated, show default
+            raise cherrypy.HTTPRedirect(default_folder_image, 302)
     api_fetchalbumart.noauth = True
     api_fetchalbumart.binary = True
 
